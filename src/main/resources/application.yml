@@ -1,0 +1,24 @@
+spring:
+
+  application:
+    name:
+      demo
+  jpa:
+    generate-ddl: 'true'
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        #  show_sql: true
+        format_sql: true
+        use_sql_comments: true # sql 과 함께 jpql 주석처리되어  콘솔창에 출력
+        show_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test2
+    username: test
+    password: test
+    driver-cname-name: org.postgresql.Driver
+
+
+
+

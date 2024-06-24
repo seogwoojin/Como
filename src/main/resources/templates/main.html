@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+</head>
+<body>
+    <div class="image-container">
+        <img src="image1.jpg" alt="Image 1" class="clickable-image" data-id="1">
+        <img src="image2.jpg" alt="Image 2" class="clickable-image" data-id="2">
+        <img src="image3.jpg" alt="Image 3" class="clickable-image" data-id="3">
+    </div>
+    <div id="result"></div>
+
+    <button>반갑습니다~</button>
+    <h2>[[${data}]]</h2>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/main.js}"></script>
+</body>
+</html>
