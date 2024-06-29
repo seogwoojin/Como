@@ -11,5 +11,5 @@ class Company (
     var problemNumber:Int,
 
     @OneToMany(mappedBy = "company")
-    var companyProblems:MutableList<ProblemPrefer>?= mutableListOf(),
+    var companyProblems:MutableList<CompanyProblem>?= mutableListOf(),
 )

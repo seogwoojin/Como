@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.Query
 interface CompanyRepository:JpaRepository<Company,Long>{
     @Query("SELECT mc FROM Company mc JOIN FETCH mc.companyProblems WHERE mc.id = :id")
     fun getCompanyWithProblems(id:Long):Company
+
+    fun findByName(name:String):Company?
 }
