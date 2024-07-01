@@ -1,9 +1,6 @@
 package kote.demo.baekjoon.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
 class BaekjoonProblem (
@@ -12,4 +9,7 @@ class BaekjoonProblem (
     var problemLink:String,
     var problemTier:Int,
     var problemTry:Int,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="algoType_id")
+    var problemType:AlgoType,
 )
