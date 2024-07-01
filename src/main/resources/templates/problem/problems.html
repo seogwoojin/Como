@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Baekjoon Problems</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background-color: #1e1e1e;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 16px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .card p {
+      margin: 8px 0;
+    }
+    .switch-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .switch-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  <script>
+    function switchProblem(index) {
+      var mainProblem = document.getElementById('main-' + index);
+      var subProblem = document.getElementById('sub-' + index);
+
+      if (mainProblem.style.display === 'none') {
+        mainProblem.style.display = 'block';
+        subProblem.style.display = 'none';
+      } else {
+        mainProblem.style.display = 'none';
+        subProblem.style.display = 'block';
+      }
+    }
+  </script>
+</head>
+<body>
+<h1>Baekjoon Problems</h1>
+<div class="container">
+  <div th:each="problem, iterStat : ${problems}">
+    <div class="card">
+      <div th:id="'main-' + ${iterStat.index}" class="problem-info">
+        <h2>Main Problem</h2>
+        <p>Name: <a th:href="'https://www.acmicpc.net/' + ${problem.mainProblemLink}" th:text="${problem.mainProblemName}" target="_blank"></a></p>
+        <p>Level: <span th:text="${problem.mainProblemLevel}"></span></p>
+        <p>Algorithm: <span th:text="${problem.mainProblemAlgo}"></span></p>
+      </div>
+      <div th:id="'sub-' + ${iterStat.index}" class="problem-info" style="display:none">
+        <h2>Sub Problem</h2>
+        <p>Name: <a th:href="'https://www.acmicpc.net/' + ${problem.subProblemLink}" th:text="${problem.subProblemName}" target="_blank"></a></p>
+        <p>Level: <span th:text="${problem.subProblemLevel}"></span></p>
+        <p>Algorithm: <span th:text="${problem.subProblemAlgo}"></span></p>
+      </div>
+      <button class="switch-button" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">Switch</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

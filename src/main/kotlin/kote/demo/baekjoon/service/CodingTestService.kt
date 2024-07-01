@@ -1,84 +1,164 @@
 package kote.demo.baekjoon.service
 
+import kote.demo.baekjoon.entity.AlgoType
 import kote.demo.baekjoon.entity.BaekjoonProblem
+import kote.demo.baekjoon.entity.enums.AlgorithmName
+import kote.demo.baekjoon.repository.AlgoTypeRepository
 import kote.demo.baekjoon.repository.BaekjoonProblemRepository
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import org.springframework.stereotype.Service
+import java.net.URI
+import kotlin.collections.ArrayDeque
+import kotlin.random.Random
 
 @Service
 class CodingTestService (
-    private val baekjoonProblemRepository: BaekjoonProblemRepository
-){
-    fun fetchPage(url: String): Document {
-        return Jsoup.connect(url).get()
-    }
+    private val baekjoonProblemRepository: BaekjoonProblemRepository,
+    private val algoTypeRepository: AlgoTypeRepository,
+) {
 
-    fun parsePage(document: Document): Map<String, String> {
-        val title = document.title()
-        val body = document.body().text()
-        return mapOf("title" to title, "body" to body)
-    }
-
-    fun parseHtml(url: String) {
-//        val res=Jsoup.connect("https://www.acmicpc.net/login?next=%2F")
-//            .userAgent("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36")
-//            .method(Connection.Method.GET)
-//            .execute()
-//        val cookie=res.cookies()
-//        println(cookie.toString())
-//        val res2=Jsoup.connect("https://www.acmicpc.net/signin")
-//            .data("login_user_id","zaza0804","login_password","zaza4490^^"
-//                ,"next","/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21&open=1&page=1",
-//                "auto_login","on",
-//                "g-recaptcha-response","03AFcWeA78GD_ZVT4B-g6ObNAcv6NaqwOpfk2QsWL24AFCYG_1aBYY6kxWJLX2crShLz2v41qPf2kEu-Ydt5DAUUxDpqYBpk6gT4JC6DIthoac8nxgRIqSHgvIMYbjjWZiQNN_1ByGWPBJV3V4Ayd6aoDn8CuccKEP8Oz3y_SN897vL2omWFDyoQ2x1_wPkRIS3ovNr8zuNBMbZRSsj9_0dPEoAqp_lMlnVvT2uyftIW1f7BeRXRETG_lidX5IcnmVjIyh5mlRVHow3vzWOH1AwykpqL0GhrN4YXRAORuNArNeQLi8CvVCKmyO_T52fkVMqSEdK8Kbd8IEL5-RLJM9szunBUIyWL1TAGh57YjdyDStj4yE_j2ZHmpKXfmWX4e-C3lVYat2_-w2Gx7CSNtlXpwT6szY8lJ4Mo1uhYgUY1QMXx0PcHMh6_KxK7vuM799djeQj8nkPSnyf0z2G-l4Ar1-OwSYSYpg--2brjyaswkRQxY_7TMj-E1J3oI50WjbeaMEbABhljpgIZp7yrqV1FrsUuI-523eEvoC7fphCZtp5vHMqAK-ZU7tDiQBbUxmuuePRQ3rekNbEyv0SuXvyFyqrjRJe6IFN02qC0qja9gk97LKUcwEttxT1BGD18NSzNGVbFvVTL234D6JShe7sjFY96VtNw8BouRMnoM2NT3WG7Jq5lk8SZY")
-//            .header("Content-Type","application/x-www-form-urlencoded")
-//            .userAgent("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36")
-//            .header("Cookie", res.cookies().toString().substring(1,res.cookies().toString().length-1))
-//            .method(Connection.Method.POST)
-//            .execute()
-//
-//        println(res2.body())
-        val res3=Jsoup.connect("https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21&page=1")
-            .header("Cookie","OnlineJudge=7cf6ss89hvd7l1fpimlidf3chf; bojautologin=b6c19b09921d2020a32be9c7d78b281a5dfa26dd")
-            .get()
-            .getElementsByTag("tbody")
-//        println(res3.getElementsByTag("tbody"))
-//        val document: Document = Jsoup.parse(documents.html())
-        val links = mutableListOf<BaekjoonProblem>()
-        res3.select("tr").forEach{row->
-            val tierSrc=row.select("td img").attr("src")
-            val tier=tierSrc.substring(tierSrc.lastIndexOf('/')+1,tierSrc.lastIndexOf('.')).toInt()
-            val href = row.select("td a").first()!!.attr("href")
-            val title = row.select("td a").first()!!.text()
-            val tries=row.select("td a").last()!!.text().toInt()
-
-            links.add(
-                BaekjoonProblem(
-                problemLink = href,
-                problemName = title,
-                problemTier = tier,
-                problemTry = tries
-            )
-            )
+    fun matchBaekjoon(level: Int, algorithm: String): List<BaekjoonProblem> {
+        val levelQueue = ArrayDeque<Int>()
+        levelQueue.add(level)
+        val selectProblemList = mutableListOf<BaekjoonProblem>()
+        val checkList: MutableList<Int> = MutableList(17) { 0 }
+        while (levelQueue.isNotEmpty() && selectProblemList.size < 2) {
+            val checkingLevel=levelQueue.removeFirst()
+            checkList[checkingLevel]=1
+            val problemList = algoTypeRepository.findByAlgoName(algorithm).problemlists
+            val problemListAfterLevel = problemList.filter {
+                it.problemTier == checkingLevel
+            }
+            if (problemListAfterLevel.isEmpty()) {
+                continue
+            } else if (problemListAfterLevel.size == 1) {
+                selectProblemList.add(problemListAfterLevel[0])
+            } else {
+                fillProblemApplyWeight(selectProblemList, problemListAfterLevel)
+            }
+            if (checkingLevel < 16 && checkList[checkingLevel+1]==0) levelQueue.add(checkingLevel + 1)
+            if (checkingLevel > 5 && checkList[checkingLevel-1]==0) levelQueue.add(checkingLevel - 1)
         }
-        baekjoonProblemRepository.saveAll(links)
-        links.forEach{
-            println(it.toString())
+        selectProblemList.forEach {
+            println(it.problemName + it.problemTier)
         }
-//        document.select("tr").forEach { row ->
-//            val anchor = row.select("td a").first()
-//            if (anchor != null) {
-//                val link = anchor.attr("href")
-//                val title = anchor.text()
-//                links.add(Pair(link, title))
-//            }
-//        }
+        return if (selectProblemList.size == 2) selectProblemList else throw Exception()
     }
 
-    private fun splitTbody(tbody: Elements){
-        val html=tbody.html()
+    fun fillProblemApplyWeight(selectProblemList: MutableList<BaekjoonProblem>, problemList: List<BaekjoonProblem>) {
+        println("problemsize=   "+problemList.size)
+        val highRateProblem = mutableListOf<Int>()
+        val middleRateProblem = mutableListOf<Int>()
+        val rowRateProblem = mutableListOf<Int>()
+        for (i in 1..problemList.size) {
+            val problemTry = problemList[i - 1].problemTry
+            if (problemTry > 1500) highRateProblem.add(i - 1)
+            else if (problemTry > 500) middleRateProblem.add(i - 1)
+            else rowRateProblem.add(i - 1)
+        }
+        while (selectProblemList.size != 2) {
+            val number = Random.nextInt(100)
+            if (number < 10 && rowRateProblem.size > 0) {
+                val randomIndex = Random.nextInt(rowRateProblem.size)
+                if (!selectProblemList.map { it.problemLink }
+                        .contains(problemList[rowRateProblem[randomIndex]].problemLink)) {
+                    selectProblemList.add(
+                        problemList[rowRateProblem[randomIndex]]
+                    )
+                }
+                rowRateProblem.removeAt(randomIndex)
+            } else if (number < 30 && middleRateProblem.size > 0) {
+                val randomIndex = Random.nextInt(middleRateProblem.size)
+                if (!selectProblemList.map { it.problemLink }
+                        .contains(problemList[middleRateProblem[randomIndex]].problemLink)) {
+                    selectProblemList.add(
+                        problemList[middleRateProblem[randomIndex]]
+                    )
+                }
+                middleRateProblem.removeAt(randomIndex)
+            } else if (highRateProblem.size > 0) {
+                val randomIndex = Random.nextInt(highRateProblem.size)
+                if (!selectProblemList.map { it.problemLink }
+                        .contains(problemList[highRateProblem[randomIndex]].problemLink)) {
+                    selectProblemList.add(
+                        problemList[highRateProblem[randomIndex]]
+                    )
+                }
+                highRateProblem.removeAt(randomIndex)
+            }
+        }
 
+    }
+
+    fun getInfoFromBaekjoon(judge: String?, autologin: String?) {
+        val urlList: Array<String> = arrayOf(
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=25&algo_if=and",
+            "https://www.acmicpc.net/problemset?sort=ac_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=126%2C127&algo_if=or",
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=33&algo_if=and",
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=141&algo_if=and", //시뮬레이션
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=125&algo_if=and", //브루트포스
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=158&algo_if=and", //문자열
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=12&algo_if=and",
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=7&algo_if=and", //그래프 이론
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=175&algo_if=and", //자료구조
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=97&algo_if=and", //정렬
+
+
+        )
+
+        urlList.forEach {
+            println(it)
+            val algoId = extractFirstAlgoValue(it)
+            val algoName: String?
+            if (algoId != null) {
+                algoName = AlgorithmName.fromId(algoId)
+            } else {
+                throw Exception()
+            }
+            val algoType = AlgoType(
+                algoId = algoId,
+                algoName = algoName,
+                problemlists = mutableListOf()
+            )
+            algoTypeRepository.save(algoType)
+
+            val tbodyList = Jsoup.connect(it)
+                .header("Cookie", "OnlineJudge=${judge}; bojautologin=${autologin}")
+                .get()
+                .getElementsByTag("tbody")
+
+            tbodyList.select("tr").forEach { row ->
+                val tierSrc = row.select("td img").attr("src")
+                val tier = tierSrc.substring(tierSrc.lastIndexOf('/') + 1, tierSrc.lastIndexOf('.')).toInt()
+                val href = row.select("td a").first()!!.attr("href")
+                val title = row.select("td a").first()!!.text()
+                val tries = row.select("td a").last()!!.text().toInt()
+
+                val baekjoonProblem = baekjoonProblemRepository.findByProblemLink(href)
+
+                if (baekjoonProblem == null) {
+                    baekjoonProblemRepository.save(
+                        BaekjoonProblem(
+                            problemLink = href,
+                            problemName = title,
+                            problemTier = tier,
+                            problemTry = tries,
+                            problemType = algoType
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun extractFirstAlgoValue(url: String): Int? {
+        val uri = URI(url)
+        val queryParams = uri.query.split("&")
+        val algoParam = queryParams.find { it.startsWith("algo=") } ?: return null
+
+        val algoValues = algoParam.split("=")[1]
+        val firstAlgoValue = algoValues.split(",").firstOrNull()?.toInt()
+
+        return firstAlgoValue
     }
 }
