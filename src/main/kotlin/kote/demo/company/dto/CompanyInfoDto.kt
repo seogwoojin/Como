@@ -9,7 +9,13 @@ class CompanyInfoDto {
     data class ProblemPreferRequestDto(
         val companyName: String,
         val problemNumber:Int,
-        val problemLevel:Int,
+        val problemLevel:String,
         val problemAlgo:String,
+    )
+
+    data class CompanyMainInfoDto(
+        val companyImg:String,
+        val companyClick:Int,
+        val companyName:String,
     )
 }

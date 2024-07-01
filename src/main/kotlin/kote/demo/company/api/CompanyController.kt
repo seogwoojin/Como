@@ -6,6 +6,7 @@ import kote.demo.company.repository.CompanyProblemRepository
 import kote.demo.company.service.CompanyService
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @Controller
@@ -27,7 +28,8 @@ class CompanyController (
     }
 
     @GetMapping("/problem")
-    fun mainCompanyProblem():String{
+    fun mainCompanyProblem(model: Model):String{
+        model.addAttribute("companies",companyService.getCompanyList())
         return "company/mainCompanyProblem"
     }
 

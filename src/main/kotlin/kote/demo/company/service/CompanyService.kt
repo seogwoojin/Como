@@ -5,6 +5,7 @@ import kote.demo.company.entity.Company
 import kote.demo.company.entity.CompanyProblem
 import kote.demo.company.repository.CompanyProblemRepository
 import kote.demo.company.repository.CompanyRepository
+import kote.demo.company.util.RatingEnum
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,6 +13,27 @@ class CompanyService (
     private val companyRepository: CompanyRepository,
     private val companyProblemRepository:CompanyProblemRepository
 ){
+    fun getCompanyByName(name:String):Company?{
+        return companyRepository.getCompanyWithProblems(name)
+    }
+    fun getCompanyList():List<String>{
+        return companyRepository.findAll().map{
+            it.name
+        }
+    }
+    fun getCompanyInfoList():List<CompanyInfoDto.CompanyMainInfoDto>{
+        val companyMainInfoList= mutableListOf<CompanyInfoDto.CompanyMainInfoDto>()
+        companyRepository.findAll().forEach{
+            companyMainInfoList.add(
+                CompanyInfoDto.CompanyMainInfoDto(
+                    companyImg="/images/사피.png",
+                    companyClick = 5,
+                    companyName = it.name
+                )
+            )
+        }
+        return companyMainInfoList
+    }
     fun saveNewCompany(companyInfo: CompanyInfoDto.CompanyRequest){
         val existingCompany=companyRepository.findByName(companyInfo.companyName)
 
@@ -43,7 +65,7 @@ class CompanyService (
         val company=companyRepository.findByName(problemAlgo.companyName)?:throw Exception()
         val companyProblemList=companyProblemRepository.findAllByCompanyOrderByProblemNumberAsc(company)
 
-        updateProblemLevel(problemAlgo.problemNumber, companyProblemList, problemAlgo.problemLevel.toFloat())
+        updateProblemLevel(problemAlgo.problemNumber, companyProblemList, RatingEnum.valueOf(problemAlgo.problemLevel).level.toFloat())
         updateProblemAlgo(problemAlgo.problemNumber, companyProblemList, problemAlgo.problemAlgo)
 
         companyProblemRepository.saveAll(companyProblemList)
@@ -55,32 +77,26 @@ class CompanyService (
         algoName:String
     ){
         val map=stringToHashMap(companyProblemList[number-1].problemAlgo)
-        if(map.containsKey(algoName)){
-            map[algoName]=map.getValue(algoName)+4
-        }
-        else{
-            map[algoName]=4
-        }
-        companyProblemList[number-1].problemAlgo=hashMapToString(map)
 
-        if(number>1) {
-            val secondMap = stringToHashMap(companyProblemList[number - 2].problemAlgo)
-            if (secondMap.containsKey(algoName)) {
-                secondMap[algoName] = secondMap.getValue(algoName) + 1
-            } else {
-                secondMap[algoName] = 1
+        for(i in 1..companyProblemList.size){
+            val map=stringToHashMap(companyProblemList[i-1].problemAlgo)
+            if(i==number){
+                if(map.containsKey(algoName)){
+                    map[algoName]=map.getValue(algoName)+5
+                }
+                else{
+                    map[algoName]=5
+                }
             }
-            companyProblemList[number-2].problemAlgo=hashMapToString(secondMap)
-        }
-
-        if(number<companyProblemList.size) {
-            val thirdMap = stringToHashMap(companyProblemList[number].problemAlgo)
-            if (thirdMap.containsKey(algoName)) {
-                thirdMap[algoName] = thirdMap.getValue(algoName) + 1
-            } else {
-                thirdMap[algoName] = 1
+            else{
+                if(map.containsKey(algoName)){
+                    map[algoName]=map.getValue(algoName)+1
+                }
+                else{
+                    map[algoName]=1
+                }
             }
-            companyProblemList[number].problemAlgo=hashMapToString(thirdMap)
+            companyProblemList[i-1].problemAlgo=hashMapToString(map)
         }
     }
 
