@@ -7,12 +7,22 @@ import kote.demo.company.repository.CompanyProblemRepository
 import kote.demo.company.repository.CompanyRepository
 import kote.demo.company.util.RatingEnum
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 
 @Service
 class CompanyService (
     private val companyRepository: CompanyRepository,
     private val companyProblemRepository:CompanyProblemRepository
 ){
+    val UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/static/images"
+    fun updateCompanyView(company: Company):Company{
+        company.companyViews+=1
+        return companyRepository.save(company)
+    }
     fun getCompanyByName(name:String):Company?{
         return companyRepository.getCompanyWithProblems(name)
     }
@@ -26,15 +36,15 @@ class CompanyService (
         companyRepository.findAll().forEach{
             companyMainInfoList.add(
                 CompanyInfoDto.CompanyMainInfoDto(
-                    companyImg="/images/사피.png",
-                    companyClick = 5,
+                    companyImg=it.companyImageUrl?:"",
+                    companyClick = it.companyViews,
                     companyName = it.name
                 )
             )
         }
         return companyMainInfoList
     }
-    fun saveNewCompany(companyInfo: CompanyInfoDto.CompanyRequest){
+    fun saveNewCompany(companyInfo: CompanyInfoDto.CompanyRequest, file:MultipartFile){
         val existingCompany=companyRepository.findByName(companyInfo.companyName)
 
         if (existingCompany != null) {
@@ -43,9 +53,15 @@ class CompanyService (
         }
         val company= Company(
             name=companyInfo.companyName,
-            problemNumber = companyInfo.problemCount
+            problemNumber = companyInfo.problemCount,
+            companyViews = 0
         )
 
+        val fileNames = StringBuilder()
+        val fileNameAndPath: Path = Paths.get(UPLOAD_DIRECTORY, file.originalFilename)
+        company.companyImageUrl="/images/"+file.originalFilename.toString()
+        fileNames.append(file.originalFilename)
+        Files.write(fileNameAndPath, file.bytes)
         companyRepository.save(company)
 
         val companyProblemList= mutableListOf<CompanyProblem>()

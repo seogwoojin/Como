@@ -8,6 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Controller
 @RequestMapping("/company")
@@ -22,9 +23,11 @@ class CompanyController (
     @PostMapping()
     @ResponseBody
     fun makeCompany(
-        @RequestBody companyInfo:CompanyInfoDto.CompanyRequest
+        @ModelAttribute companyInfo: CompanyInfoDto.CompanyRequest,
+        @RequestParam("image") file:MultipartFile,
     ){
-       return companyService.saveNewCompany(companyInfo)
+
+       return companyService.saveNewCompany(companyInfo, file)
     }
 
     @GetMapping("/problem")

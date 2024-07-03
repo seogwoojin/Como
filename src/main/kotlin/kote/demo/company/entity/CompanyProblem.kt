@@ -7,7 +7,7 @@ class CompanyProblem (
     @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long? = null,
 
     @ManyToOne
-    @JoinColumn(name = "company_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "company_id")
     var company:Company,
     var problemNumber: Int,
     var problemAlgo:String,
