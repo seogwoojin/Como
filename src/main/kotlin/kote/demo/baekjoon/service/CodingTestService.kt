@@ -7,11 +7,15 @@ import kote.demo.baekjoon.repository.AlgoTypeRepository
 import kote.demo.baekjoon.repository.BaekjoonProblemRepository
 import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.net.URI
+import java.util.*
+import javax.swing.text.html.Option
 import kotlin.collections.ArrayDeque
 import kotlin.random.Random
 
 @Service
+//@Transactional(readOnly=true)
 class CodingTestService (
     private val baekjoonProblemRepository: BaekjoonProblemRepository,
     private val algoTypeRepository: AlgoTypeRepository,
@@ -22,15 +26,17 @@ class CodingTestService (
         levelQueue.add(level)
         val selectProblemList = mutableListOf<BaekjoonProblem>()
         val checkList: MutableList<Int> = MutableList(17) { 0 }
+        val problemList = algoTypeRepository.findByAlgoName(algorithm).get().problemlists
         while (levelQueue.isNotEmpty() && selectProblemList.size < 2) {
             val checkingLevel=levelQueue.removeFirst()
             checkList[checkingLevel]=1
-            val problemList = algoTypeRepository.findByAlgoName(algorithm).problemlists
+
             val problemListAfterLevel = problemList.filter {
                 it.problemTier == checkingLevel
             }
+
             if (problemListAfterLevel.isEmpty()) {
-                continue
+
             } else if (problemListAfterLevel.size == 1) {
                 selectProblemList.add(problemListAfterLevel[0])
             } else {
@@ -115,12 +121,26 @@ class CodingTestService (
             } else {
                 throw Exception()
             }
-            val algoType = AlgoType(
-                algoId = algoId,
-                algoName = algoName,
-                problemlists = mutableListOf()
-            )
-            algoTypeRepository.save(algoType)
+            val algoType: Optional<AlgoType>
+            if (algoName != null) {
+                algoType=algoTypeRepository.findByAlgoName(algoName)
+            }
+            else{
+                algoType=Optional.empty()
+            }
+            val nowAlgoType:AlgoType
+            if(algoType.isPresent){
+                nowAlgoType=algoType.get()
+            }
+            else {
+                nowAlgoType = AlgoType(
+                    algoId = algoId,
+                    algoName = algoName,
+                    problemlists = mutableListOf()
+                )
+
+                algoTypeRepository.save(nowAlgoType)
+            }
 
             val tbodyList = Jsoup.connect(it)
                 .header("Cookie", "OnlineJudge=${judge}; bojautologin=${autologin}")
@@ -143,7 +163,7 @@ class CodingTestService (
                             problemName = title,
                             problemTier = tier,
                             problemTry = tries,
-                            problemType = algoType
+                            problemType = nowAlgoType
                         )
                     )
                 }

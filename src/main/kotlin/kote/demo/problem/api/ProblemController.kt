@@ -18,7 +18,8 @@ class ProblemController (
         @RequestParam choice:String,
         model: Model
     ):String{
-
+        model.addAttribute("company",company)
+        model.addAttribute("choice",choice)
         model.addAttribute("problems",problemService.getRandomTestList(company,choice))
         return "problem/problems"
     }

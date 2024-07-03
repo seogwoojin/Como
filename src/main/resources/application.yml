@@ -1,4 +1,6 @@
 spring:
+  thymeleaf:
+    cache: false
 
   application:
     name:
@@ -6,7 +8,7 @@ spring:
   jpa:
     generate-ddl: 'true'
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate:
         #  show_sql: true
@@ -18,7 +20,6 @@ spring:
     username: test
     password: test
     driver-cname-name: org.postgresql.Driver
-
 
 
 

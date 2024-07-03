@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코딩 테스트 기업 등록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h2>코딩 테스트 기업 등록하기</h2>
+
+<form action="#" enctype="multipart/form-data" th:action="@{/company}" method="post">
+    <label for="companyName">기업 이름:</label><br>
+    <input type="text" id="companyName" name="companyName" required><br><br>
+    <label for="problemCount">문제 수:</label><br>
+    <input type="number" id="problemCount" name="problemCount" required><br><br>
+
+    <input type="file" name="image" id="image" class="form-control-file">
+
+    <input type="submit" value="등록하기">
+</form>
+
+
+
+<script>
+    // Form submit event listener
+    document.getElementById('companyForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submit
+
+        // Create FormData object to collect form data
+        let formData = new FormData(this);
+
+        // Convert FormData to JSON object
+        let jsonObject = {};
+        formData.forEach((value, key) => {
+            jsonObject[key] = value;
+        });
+
+        // Convert JSON object to string
+        let jsonData = JSON.stringify(jsonObject);
+
+        // Send AJAX request
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/company');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert('Company registration successful')
+                // Handle success response if needed
+            } else {
+                alert('Company registration failed')
+                // Handle error response if needed
+            }
+        };
+        xhr.send(jsonData);
+    });
+</script>
+
+</body>
+</html>

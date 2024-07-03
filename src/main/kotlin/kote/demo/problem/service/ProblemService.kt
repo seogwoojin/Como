@@ -17,7 +17,8 @@ class ProblemService (
         companyName: String,
         difficulty: String,
     ): List<ProblemDto.BaekjoonProblemResponse> {
-        val company = companyService.getCompanyByName(companyName) ?: throw Exception()
+        val company = companyService.getCompanyByName(companyName) ?: throw Exception("Company Not Found")
+        companyService.updateCompanyView(company)
         val companyAlgoExpectation= makeCompanyExpectTest(company)
         if(difficulty=="easy"){
             companyAlgoExpectation.forEach{
