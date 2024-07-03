@@ -16,11 +16,18 @@ java {
 	sourceCompatibility = JavaVersion.VERSION_17
 }
 
+allOpen {
+	annotation("jakarta.persistence.Entity")
+	annotation("jakarta.persistence.Embeddable")
+	annotation("jakarta.persistence.MappedSuperclass")
+}
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-actuator")	// 스프링 모니터링
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")

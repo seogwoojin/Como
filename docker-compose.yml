@@ -1,18 +1,25 @@
-version: '2'
-
+version: "2"
 services:
-  app:
-    build: .
+  nginx:
+    image: springboot-nginx:0.1
     ports:
-      - "8080:8080"
-    container_name: app
+      - 80:80
     depends_on:
-      - db
+      - springboot-app
+    networks:
+      - mynetwork
 
-  db:
-    image: 'postgres:13.1-alpine'
-    container_name: "db"
+  springboot-app:
+    image: demo-docker-springboot  # 올바른 이미지 이름을 사용합니다.
+    container_name: demo-docker-springboot
     environment:
-      POSTGRES_DB: test1
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    expose:
+      - 8080
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
