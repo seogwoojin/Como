@@ -2,55 +2,90 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Baekjoon Problems</title>
+
   <style>
-    body {
-      background-color: #121212;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    .hidden-info {
+      display: none;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 20px;
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
     }
-    .card {
-      background-color: #1e1e1e;
-      border: 2px solid #333;
-      border-radius: 8px;
-      padding: 16px;
-      width: 300px;
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+
+    .container .card{
+      color: black;
+      background-color: white;
       text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      position: relative;
+      box-shadow: 1px 1px 3px 1px #dadce0;
     }
+
     .card h2 {
       margin-top: 0;
     }
     .card p {
       margin: 8px 0;
     }
-    .switch-button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
+    .custom-btn {
+      width: 130px;
+      height: 40px;
+      color: #fff;
+      border-radius: 5px;
+      padding: 10px 25px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 500;
+      background: transparent;
       cursor: pointer;
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+      transition: all 0.3s ease;
+      position: relative;
+      display: inline-block;
+      box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+      7px 7px 20px 0px rgba(0,0,0,.1),
+      4px 4px 5px 0px rgba(0,0,0,.1);
+      outline: none;
     }
-    .switch-button:hover {
-      background-color: #0056b3;
+    .problem-info{
+      color: black;
+    }
+    .two-info{
+      display: flex;
+    }
+
+    .open-info, .close-info{
+      width: 200px;
     }
   </style>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/templatemo-style.css">
+  <link rel="stylesheet" href="/css/problempage.css">
   <script>
     function switchProblem(index) {
       var mainProblem = document.getElementById('main-' + index);
@@ -67,25 +102,77 @@
   </script>
 </head>
 <body>
+<div id="loader-wrapper">
+  <div id="loader"></div>
+
+  <div class="loader-section section-left"></div>
+  <div class="loader-section section-right"></div>
+
+</div>
 <h1>Baekjoon Problems</h1>
-<div class="container">
-  <div th:each="problem, iterStat : ${problems}">
-    <div class="card">
+
+<div class="container-fluid tm-container-content tm-mt-60">
+  <div class="row mb-4">
+    <h2 class="col-6 tm-text-primary" th:text="'기존 기출문제에 기반해 선택된 '+ ${company} + '의 ' + ${choice} +'난이도에 적합한 문제들입니다.'">
+      CODING TEST LIST
+    </h2>
+    <div class="col-6 text-right">
+      <span id="timer">02:00:00</span>
+      <button onclick="initializeTimer()">시작</button>
+    </div>
+  </div>
+  <div class="card_list">
+    <div th:each="problem, iterStat : ${problems}" class="card">
+<!--      <div class="card">-->
       <div th:id="'main-' + ${iterStat.index}" class="problem-info">
-        <h2>Main Problem</h2>
-        <p>Name: <a th:href="'https://www.acmicpc.net/' + ${problem.mainProblemLink}" th:text="${problem.mainProblemName}" target="_blank"></a></p>
-        <p>Level: <span th:text="${problem.mainProblemLevel}"></span></p>
-        <p>Algorithm: <span th:text="${problem.mainProblemAlgo}"></span></p>
+        <h2 th:text="${iterStat.index}+1+'번 문제'">Main Problem</h2>
+        <div class="two-info">
+          <div class="open-info">
+            <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.mainProblemLink}" th:text="${problem.mainProblemName}" target="_blank"></a></p>
+            <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
+              <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
+            </button>
+          </div>
+          <div class="close-info hidden-info" th:id="'mainCloseInfo-' + ${iterStat.index}">
+            <p>Level: <span th:text="${problem.mainProblemLevel}"></span></p>
+            <p>Algorithm: <span th:text="${problem.mainProblemAlgo}"></span></p>
+          </div>
+          <p th:id="'mainToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'main\')'">상세 정보 보기</a></p>
+        </div>
       </div>
       <div th:id="'sub-' + ${iterStat.index}" class="problem-info" style="display:none">
-        <h2>Sub Problem</h2>
-        <p>Name: <a th:href="'https://www.acmicpc.net/' + ${problem.subProblemLink}" th:text="${problem.subProblemName}" target="_blank"></a></p>
-        <p>Level: <span th:text="${problem.subProblemLevel}"></span></p>
-        <p>Algorithm: <span th:text="${problem.subProblemAlgo}"></span></p>
+        <h2 th:text="${iterStat.index}+1+'번 문제'">Sub Problem</h2>
+        <div class="two-info">
+          <div class="open-info">
+            <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.subProblemLink}" th:text="${problem.subProblemName}" target="_blank"></a></p>
+            <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
+              <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
+            </button>
+          </div>
+          <div class="close-info hidden-info" th:id="'subCloseInfo-' + ${iterStat.index}">
+            <p>Level: <span th:text="${problem.subProblemLevel}"></span></p>
+            <p>Algorithm: <span th:text="${problem.subProblemAlgo}"></span></p>
+          </div>
+          <p th:id="'subToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'sub\')'">상세 정보 보기</a></p>
+        </div>
       </div>
-      <button class="switch-button" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">Switch</button>
+    </div>
+  </div>
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <p>정말 여시겠습니까?</p>
+      <button id="confirmButton" onclick="openInfo()">예</button>
+      <button onclick="closeModal()">아니요</button>
     </div>
   </div>
 </div>
+<script src="/js/plugins.js"></script>
+<script>
+  $(window).on("load", function() {
+    $('body').addClass('loaded');
+  });
+</script>
+  <script src="/js/problem.js"></script>
 </body>
 </html>
