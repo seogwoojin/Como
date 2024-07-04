@@ -32,3 +32,15 @@ jobs:
       run: |
         docker-compose build
         docker-compose push
+        
+    - name: Deploy to AWS EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/springboot-nginx:0.1
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/demo-docker-springboot:0.1
+          
+          docker-compose down
+          docker container prune
+
+          docker-compose up
+        EOF
