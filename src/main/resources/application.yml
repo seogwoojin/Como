@@ -16,10 +16,10 @@ spring:
         use_sql_comments: true # sql 과 함께 jpql 주석처리되어  콘솔창에 출력
         show_sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/test2
-    username: test
-    password: test
-    driver-cname-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
 
 

@@ -1,7 +1,11 @@
 version: "2"
 services:
   nginx:
-    image: springboot-nginx:0.1
+    build:
+      context: ./nginx
+      dockerfile: nginx_Dockerfile
+
+    image: seogwoojin1/springboot-nginx:0.1
     ports:
       - 80:80
     depends_on:
@@ -10,7 +14,8 @@ services:
       - mynetwork
 
   springboot-app:
-    image: demo-docker-springboot  # 올바른 이미지 이름을 사용합니다.
+    build: .
+    image: seogwoojin1/demo-docker-springboot:0.1  # 올바른 이미지 이름을 사용합니다.
     container_name: demo-docker-springboot
     environment:
       - DATABASE_URL=${DATABASE_URL}
