@@ -32,15 +32,14 @@ jobs:
       run: |
         docker-compose build
         docker-compose push
-        
-    - name: Set up SSH key
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key
-        chmod 600 private_key
-        
-    - name: Deploy to AWS EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} <<EOF
+
+    - name: Run scripts in server
+      uses: appleboy/ssh-action@master
+      with:
+        key: ${{ secrets.SSH_KEY }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1
           docker pull ${{ secrets.DOCKER_USERNAME }}/demo-docker-springboot:0.1
           
@@ -48,9 +47,3 @@ jobs:
           docker container prune -f
 
           docker-compose up
-        EOF
-      shell: bash
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        DATABASE_USER: ${{ secrets.DATABASE_USER }}
-        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
