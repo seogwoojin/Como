@@ -35,7 +35,7 @@ jobs:
         
     - name: Set up SSH key
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key
         chmod 600 private_key
         
     - name: Deploy to AWS EC2
@@ -45,7 +45,12 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/demo-docker-springboot:0.1
           
           docker-compose down
-          docker container prune
+          docker container prune -f
 
           docker-compose up
         EOF
+      shell: bash
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_USER: ${{ secrets.DATABASE_USER }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
