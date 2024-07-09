@@ -5,7 +5,7 @@ import kote.demo.company.entity.Company
 import kote.demo.company.entity.CompanyProblem
 import kote.demo.company.service.CompanyService
 import kote.demo.problem.dto.ProblemDto
-import kote.demo.problem.enum.AlgoWeightEnum
+import kote.demo.problem.util.enum.AlgoWeightEnum
 import org.springframework.stereotype.Service
 import kotlin.random.Random
 @Service
