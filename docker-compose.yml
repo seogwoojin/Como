@@ -1,10 +1,6 @@
 version: "2"
 services:
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: nginx_Dockerfile
-
     image: seogwoojin1/springboot-nginx:0.1
     ports:
       - 80:80
@@ -14,7 +10,6 @@ services:
       - mynetwork
 
   springboot-app:
-    build: .
     image: seogwoojin1/demo-docker-springboot:0.1  # 올바른 이미지 이름을 사용합니다.
     container_name: demo-docker-springboot
     environment:

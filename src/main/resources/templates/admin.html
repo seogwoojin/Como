@@ -2,14 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Multiple Submit Buttons</title>
+    <script>
+        function submitFormWithNumber(number) {
+            // 폼 객체를 가져옵니다.
+            const form = document.getElementById('myForm');
+            // 폼의 action 속성에 매개변수를 추가합니다.
+            form.action = `?number=${number}`;
+            // 폼을 제출합니다.
+            const result=form.submit();
+            console.log(result);
+        }
+    </script>
 </head>
 <body>
-<form action="" method="post">
+<form id="myForm" action="" method="post">
     <p>OnlineJudge: <input type="text" name="onlineJudge"></p>
     <p>bojautologin: <input type="text" name="bojAutoLogin"></p>
     <p>
-        <input type="submit">
+        <input type="button" value="제출1" onclick="submitFormWithNumber(1)">
+        <input type="button" value="제출2" onclick="submitFormWithNumber(2)">
+        <input type="button" value="제출3" onclick="submitFormWithNumber(3)">
+        <input type="button" value="제출4" onclick="submitFormWithNumber(4)">
     </p>
 </form>
 </body>

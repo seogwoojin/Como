@@ -1,4 +1,4 @@
-package kote.demo.problem.enum
+package kote.demo.problem.util.enum
 
 import kotlin.random.Random
 

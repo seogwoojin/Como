@@ -19,15 +19,15 @@ class BaekjoonScrapController(
     }
 
     @PostMapping(path = [""], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @ResponseBody
     fun getProblemList(
-        @RequestParam onlineJudge: String?,
-        @RequestParam bojAutoLogin: String?
-    ): ResponseEntity.BodyBuilder {
-        println(onlineJudge)
-        println(bojAutoLogin)
-        if (onlineJudge.isNullOrBlank() || bojAutoLogin.isNullOrBlank()) throw Exception("Not Access")
-        codingTestService.getInfoFromBaekjoon(onlineJudge, bojAutoLogin)
-        return ResponseEntity.status(HttpStatus.OK)
+        @RequestParam onlineJudge: String,
+        @RequestParam bojAutoLogin: String,
+        @RequestParam number:Int,
+    ): String {
+        if (onlineJudge.isBlank() || bojAutoLogin.isBlank()) throw Exception("Not Access")
+        codingTestService.getInfoFromBaekjoon(onlineJudge, bojAutoLogin, number)
+        return "OK"
     }
 
 }

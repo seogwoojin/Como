@@ -20,13 +20,12 @@ class CompanyController (
         return "company/mainCompany"
     }
 
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     fun makeCompany(
         @ModelAttribute companyInfo: CompanyInfoDto.CompanyRequest,
         @RequestParam("image") file:MultipartFile,
     ){
-
        return companyService.saveNewCompany(companyInfo, file)
     }
 
