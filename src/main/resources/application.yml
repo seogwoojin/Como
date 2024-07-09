@@ -1,25 +1,36 @@
 spring:
+  profiles:
+    active: prod
+
   thymeleaf:
-    cache: false
+    cache: true  # 프로덕션 환경에서는 캐시를 활성화합니다.
 
   application:
-    name:
-      demo
+    name: demo
+
   jpa:
-    generate-ddl: 'true'
+    generate-ddl: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate  # 프로덕션에서는 스키마를 자동으로 생성하지 않도록 합니다.
     properties:
       hibernate:
-        #  show_sql: true
-        format_sql: true
-        use_sql_comments: true # sql 과 함께 jpql 주석처리되어  콘솔창에 출력
-        show_sql: true
+        format_sql: false  # 프로덕션에서는 SQL 포맷팅을 비활성화합니다.
+        use_sql_comments: false  # 프로덕션에서는 SQL 주석을 비활성화합니다.
+        show_sql: false  # 프로덕션에서는 SQL 출력을 비활성화합니다.
+
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-
-
+logging:
+  level:
+    root: WARN  # 기본 로그 레벨을 WARN으로 설정합니다.
+    org.springframework: WARN  # Spring 프레임워크 로그 레벨을 WARN으로 설정합니다.
+    org.hibernate: ERROR  # Hibernate 로그 레벨을 ERROR로 설정합니다.
+  file:
+    name: logs/application.log  # 로그 파일 위치를 설정합니다.
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # 콘솔 로그 패턴 설정
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # 파일 로그 패턴 설정
