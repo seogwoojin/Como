@@ -28,9 +28,12 @@ jobs:
         echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
         echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
 
+    - name: Build with Gradle
+      run: ./gradlew build -x test
+
     - name: Build and push springboot-nginx image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1 ./nginx
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1 --file ./nginx/nginx_Dockerfile ./nginx
         docker push ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1
 
     - name: Build and push demo-docker-springboot image
