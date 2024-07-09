@@ -28,12 +28,17 @@ jobs:
         echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
         echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
 
-    - name: Build and push Docker images
+    - name: Build and push springboot-nginx image
       run: |
-        docker-compose build
-        docker-compose push
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1 ./nginx
+        docker push ${{ secrets.DOCKER_USERNAME }}/springboot-nginx:0.1
 
-    - name: Run scripts in server
+    - name: Build and push demo-docker-springboot image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/demo-docker-springboot:0.1 .
+        docker push ${{ secrets.DOCKER_USERNAME }}/demo-docker-springboot:0.1
+
+    - name: Run scripts on server
       uses: appleboy/ssh-action@master
       with:
         key: ${{ secrets.EC2_SSH_KEY }}
@@ -45,5 +50,4 @@ jobs:
           
           docker-compose down
           docker container prune -f
-
           docker-compose up -d
