@@ -98,7 +98,7 @@ class CodingTestService (
     fun getInfoFromBaekjoon(judge: String, autologin: String, order:Int) {
         val urlList: Array<String> = arrayOf(
             "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=25&algo_if=and",
-            "https://www.acmicpc.net/problemset?sort=ac_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=126%2C127&algo_if=or&",
+            "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=126%2C127&algo_if=or&",
             "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=33&algo_if=and&page=1",
             "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=141&algo_if=and&page=1", //시뮬레이션
             "https://www.acmicpc.net/problemset?sort=submit_desc&tier=5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16&algo=125&algo_if=and&page=1", //브루트포스

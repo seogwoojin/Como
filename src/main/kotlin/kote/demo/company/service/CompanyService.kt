@@ -58,6 +58,11 @@ class CompanyService (
         )
 
         val fileNames = StringBuilder()
+
+        if(Files.notExists(Paths.get(UPLOAD_DIRECTORY))){
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY))
+        }
+
         val fileNameAndPath: Path = Paths.get(UPLOAD_DIRECTORY, file.originalFilename)
         company.companyImageUrl="/images/"+file.originalFilename.toString()
         fileNames.append(file.originalFilename)
