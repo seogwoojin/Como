@@ -41,6 +41,7 @@ dependencies {
 	implementation("org.jsoup:jsoup:1.15.3")
 	implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
 	kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+	implementation("org.springframework.boot:spring-boot-starter-logging") // 로그 작성
 }
 
 tasks.withType<KotlinCompile> {

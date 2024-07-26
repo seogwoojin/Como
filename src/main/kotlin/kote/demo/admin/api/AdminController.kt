@@ -3,8 +3,10 @@ package kote.demo.admin.api
 import jakarta.servlet.http.HttpServletRequest
 import kote.demo.admin.service.AdminService
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class AdminController(
@@ -12,12 +14,19 @@ class AdminController(
 ){
 
     @GetMapping("/login")
-    fun showLoginForm(): String {
+    fun showLoginForm(
+        model: Model,
+        @RequestParam redirectURL: String
+    ): String {
+        model.addAttribute("redirectURL", redirectURL)
         return "login/login-page"
     }
 
     @PostMapping("/login")
-    fun login(request: HttpServletRequest): String {
+    fun login(
+        request: HttpServletRequest,
+        @RequestParam redirectURL:String)
+    : String {
         val username = request.getParameter("username")
         val password = request.getParameter("password")
 
@@ -25,7 +34,7 @@ class AdminController(
 
         return if (user != null && password==user.password ) {
             request.session.setAttribute("USER_ROLE", user.role)
-            "redirect:/baekjoon"
+            "redirect:${redirectURL}"
         } else {
             "redirect:/login?error"
         }
