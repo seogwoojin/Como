@@ -62,3 +62,4 @@ jobs:
           docker container prune -f
           docker-compose up -d
           docker image prune -a -f
+          docker-compose restart nginx
