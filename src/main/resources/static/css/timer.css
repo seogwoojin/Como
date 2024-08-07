@@ -1,0 +1,56 @@
+/* 추가된 스타일 */
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.timer-display {
+    font-size: 2em;
+    margin-bottom: 10px;
+    font-family: 'Lato', sans-serif;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.timer-controls button {
+    width: 100px;
+    height: 40px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    color: #fff;
+}
+
+.start-btn {
+    background: #4CAF50;
+}
+
+.stop-btn {
+    background: #f44336;
+}
+
+.reset-btn {
+    background: #2196F3;
+}
+
+.input-container {
+    margin-bottom: 10px;
+}
+
+.input-container input {
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    font-size: 1em;
+    font-family: 'Lato', sans-serif;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}

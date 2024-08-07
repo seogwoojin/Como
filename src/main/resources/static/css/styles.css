@@ -1,0 +1,96 @@
+/* 전체 페이지의 스타일 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    background-color: #000;
+}
+
+/* 컨테이너 스타일 */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+/* 메시지 스타일 */
+.message {
+    text-align: center;
+    color: white;
+    position: relative;
+    z-index: 10;
+}
+
+.animated-text {
+    font-size: 4rem;
+    margin: 0;
+    animation: moveUpDown 3s ease-in-out infinite;
+}
+
+@keyframes moveUpDown {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* 불꽃놀이 애니메이션 */
+.fireworks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.fireworks::before,
+.fireworks::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+    animation: fireworks 1.5s ease-in-out infinite;
+}
+
+.fireworks::before {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.fireworks::after {
+    top: 20%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    animation-delay: 0.5s;
+}
+
+@keyframes fireworks {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Baekjoon Problems</title>
-
+  <title>코모-코딩모의고사</title>
   <style>
     .hidden-info {
       display: none;
@@ -40,12 +39,13 @@
       cursor: pointer;
     }
 
-
-    .container .card{
+    .container .card {
       color: black;
       background-color: white;
       text-align: center;
       box-shadow: 1px 1px 3px 1px #dadce0;
+      margin-bottom: 20px;
+      padding: 15px;
     }
 
     .card h2 {
@@ -67,25 +67,69 @@
       transition: all 0.3s ease;
       position: relative;
       display: inline-block;
-      box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+      box-shadow: inset 2px 2px 2px 0px rgba(255,255,255,.5),
       7px 7px 20px 0px rgba(0,0,0,.1),
       4px 4px 5px 0px rgba(0,0,0,.1);
       outline: none;
     }
-    .problem-info{
+    .problem-info {
       color: black;
+      padding: 10px;
+      flex: 1; /* Allow problem-info to take available space */
     }
-    .two-info{
+    .two-info {
       display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      height: 250px;
+      justify-content: space-evenly;
+    }
+    .open-info, .close-info {
+      width: 100%;
+    }
+    .code-editor-container {
+      display: flex;
+      gap: 20px; /* Space between problem and editor */
+      align-items: flex-start; /* Align items to the top */
+      flex-direction: row;
+    }
+    .code-editor {
+      width: 400px; /* Fixed width for the code editor */
+      height: 300px; /* Set height for the editor */
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      font-family: monospace;
+      padding: 10px;
+      box-sizing: border-box; /* Include padding in width/height */
+      overflow: auto;
+      text-align: left; /* Ensure text is left-aligned */
+    }
+    .link-list {
+      margin-top: 50px;
+      list-style-type: none;
+      padding: 0;
     }
 
-    .open-info, .close-info{
-      width: 200px;
+    .link-list li {
+      margin-bottom: 10px;
+    }
+
+    .link-list a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    .link-list a:hover {
+      text-decoration: underline;
     }
   </style>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/templatemo-style.css">
   <link rel="stylesheet" href="/css/problempage.css">
+  <link rel="stylesheet" href="/css/timer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
   <script>
     function switchProblem(index) {
       var mainProblem = document.getElementById('main-' + index);
@@ -99,6 +143,20 @@
         subProblem.style.display = 'block';
       }
     }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.querySelectorAll('.code-editor').forEach((editorElement) => {
+        CodeMirror.fromTextArea(editorElement, {
+          mode: 'javascript',
+          lineNumbers: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: false,
+          lineWrapping: true,
+          gutters: ["CodeMirror-linenumbers"], // Show line numbers
+        });
+      });
+    });
   </script>
 </head>
 <body>
@@ -109,70 +167,97 @@
   <div class="loader-section section-right"></div>
 
 </div>
-<h1>Baekjoon Problems</h1>
-
+<header style="padding: 30px">
+  <a class="navbar-brand" href="/">
+    <img src="/images/COMO_V2.png" alt="Image" class="img-fluid" width="100px" height="100px"/>
+  </a>
+  <h1 th:text="'기존 기출문제에 기반해 선택된 '+ ${company} + '의 ' + ${choice} +'난이도에 적합한 문제들입니다.'">Baekjoon Problems</h1>
+</header>
 <div class="container-fluid tm-container-content tm-mt-60">
   <div class="row mb-4">
-    <h2 class="col-6 tm-text-primary" th:text="'기존 기출문제에 기반해 선택된 '+ ${company} + '의 ' + ${choice} +'난이도에 적합한 문제들입니다.'">
-      CODING TEST LIST
-    </h2>
-    <div class="col-6 text-right">
-      <span id="timer">02:00:00</span>
-      <button onclick="initializeTimer()">시작</button>
+    <p class="col-6" >
+      # 이미 풀어본 문제나, 언어 문제 등의 이유로 정상적인 풀이가 어려운 경우 스위치 버튼을 이용해 예비 문제로 바꾸는 것을 권장합니다.
+      <br># 실제 시험과 유사하게 문제 알고리즘과, 난이도가 포함된 상세 정보 보기는 지양하는 것을 추천합니다.
+      <br><a href="#detail"># 참고한 사이트 목록</a>
+    </p>
+    <div class="mb-4" style="max-width: fit-content; margin-left: 50px">
+      <div class="col-12 timer-container">
+        <div id="timerDisplay" class="timer-display">00:00</div>
+        <div class="input-container">
+          <input id="timerMinutes" type="number" placeholder="분" min="0">
+          <button class="reset-btn" onclick="setTimer()">설정</button>
+        </div>
+        <div class="timer-controls">
+          <button class="start-btn" onclick="startTimer()">시작</button>
+          <button class="stop-btn" onclick="stopTimer()">중지</button>
+          <button class="reset-btn" onclick="resetTimer()">리셋</button>
+
+        </div>
+      </div>
     </div>
   </div>
   <div class="card_list">
     <div th:each="problem, iterStat : ${problems}" class="card">
-<!--      <div class="card">-->
-      <div th:id="'main-' + ${iterStat.index}" class="problem-info">
-        <h2 th:text="${iterStat.index}+1+'번 문제'">Main Problem</h2>
-        <div class="two-info">
-          <div class="open-info">
-            <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.mainProblemLink}" th:text="${problem.mainProblemName}" target="_blank"></a></p>
-            <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
-              <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
-            </button>
+      <div class="code-editor-container">
+        <div th:id="'main-' + ${iterStat.index}" class="problem-info">
+          <h2 th:text="${iterStat.index}+1+'번 문제'">Main Problem</h2>
+          <div class="two-info">
+            <div class="open-info">
+              <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.mainProblemLink}" th:text="${problem.mainProblemName}" target="_blank"></a></p>
+              <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
+                <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
+              </button>
+            </div>
+            <div class="close-info hidden-info" th:id="'mainCloseInfo-' + ${iterStat.index}">
+              <p>Level: <span th:text="${problem.mainProblemLevel}"></span></p>
+              <p>Algorithm: <span th:text="${problem.mainProblemAlgo}"></span></p>
+            </div>
+            <p th:id="'mainToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'main\')'">상세 정보 보기</a></p>
           </div>
-          <div class="close-info hidden-info" th:id="'mainCloseInfo-' + ${iterStat.index}">
-            <p>Level: <span th:text="${problem.mainProblemLevel}"></span></p>
-            <p>Algorithm: <span th:text="${problem.mainProblemAlgo}"></span></p>
-          </div>
-          <p th:id="'mainToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'main\')'">상세 정보 보기</a></p>
         </div>
-      </div>
-      <div th:id="'sub-' + ${iterStat.index}" class="problem-info" style="display:none">
-        <h2 th:text="${iterStat.index}+1+'번 문제'">Sub Problem</h2>
-        <div class="two-info">
-          <div class="open-info">
-            <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.subProblemLink}" th:text="${problem.subProblemName}" target="_blank"></a></p>
-            <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
-              <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
-            </button>
+        <div th:id="'sub-' + ${iterStat.index}" class="problem-info" style="display:none">
+          <h2 th:text="${iterStat.index}+1+'번 문제'">Sub Problem</h2>
+          <div class="two-info">
+            <div class="open-info">
+              <p>Name: <a th:href="'https://www.acmicpc.net' + ${problem.subProblemLink}" th:text="${problem.subProblemName}" target="_blank"></a></p>
+              <button class="switch-button custom-btn btn-7" th:onclick="'switchProblem(' + ${iterStat.index} + ')'">
+                <img src="/images/arrow-refresh-direction-navigation-svgrepo-com.svg">
+              </button>
+            </div>
+            <div class="close-info hidden-info" th:id="'subCloseInfo-' + ${iterStat.index}">
+              <p>Level: <span th:text="${problem.subProblemLevel}"></span></p>
+              <p>Algorithm: <span th:text="${problem.subProblemAlgo}"></span></p>
+            </div>
+            <p th:id="'subToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'sub\')'">상세 정보 보기</a></p>
           </div>
-          <div class="close-info hidden-info" th:id="'subCloseInfo-' + ${iterStat.index}">
-            <p>Level: <span th:text="${problem.subProblemLevel}"></span></p>
-            <p>Algorithm: <span th:text="${problem.subProblemAlgo}"></span></p>
-          </div>
-          <p th:id="'subToggleLink-' + ${iterStat.index}" class="close-info"><a href="javascript:void(0);" th:onclick="'toggleInfo(' + ${iterStat.index} + ', \'sub\')'">상세 정보 보기</a></p>
         </div>
+        <textarea class="code-editor">// Write your code here...</textarea>
       </div>
+
     </div>
   </div>
   <div id="confirmModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <p>정말 여시겠습니까?</p>
+      <p>정말 상세 정보를 확인하시겠습니까?</p>
       <button id="confirmButton" onclick="openInfo()">예</button>
       <button onclick="closeModal()">아니요</button>
     </div>
   </div>
 </div>
+<ul id="detail" class="link-list">
+  <li th:each="link : ${links}">
+    <a th:href="@{${link}}" th:text="${link}" target="_blank"></a>
+  </li>
+</ul>
+
 <script src="/js/plugins.js"></script>
 <script>
   $(window).on("load", function() {
     $('body').addClass('loaded');
   });
 </script>
-  <script src="/js/problem.js"></script>
+<script src="/js/timer.js"></script>
+<script src="/js/problem.js"></script>
 </body>
 </html>
