@@ -168,4 +168,32 @@ class CompanyService (
             }
         }
     }
+
+    fun getCompanyLinks(companyName:String): List<String>{
+        val company=companyRepository.findByName(companyName)
+        val urlString=company?.companyHistoryUrl
+        if (urlString != null) {
+            convertStringToList(urlString)
+        }
+        return if(urlString!=null) convertStringToList(urlString) else listOf()
+    }
+
+    fun convertStringToList(urlString: String): List<String> {
+        return urlString.split(",")
+    }
+
+    fun convertListToString(urlList: List<String>): String {
+        return urlList.joinToString(",")
+    }
+
+    fun addCompanyLink(company:String, url:String) {
+        println(company)
+        val company=companyRepository.findByName(company)?:throw Exception()
+        val companyUrlString=company.companyHistoryUrl?: ""
+        println("$companyUrlString,$url")
+        company.companyHistoryUrl= "$companyUrlString,$url"
+        companyRepository.save(company)
+    }
+
+
 }

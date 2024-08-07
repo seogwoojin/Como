@@ -13,6 +13,11 @@ class CompanyInfoDto {
         val problemAlgo:String,
     )
 
+    data class CompanyUrlRequest(
+        val companyName: String,
+        val urls:String
+    )
+
     data class CompanyMainInfoDto(
         val companyImg:String,
         val companyClick:Int,

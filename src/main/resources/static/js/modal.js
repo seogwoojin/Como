@@ -40,20 +40,44 @@ function openModal(company) {
         showDenyButton: true,
         showConfirmButton: true,
         confirmButtonText: 'Easy',
-        denyButtonText: 'Normal',
-        cancelButtonText: 'Hard',
+        cancelButtonText: 'Normal',
+        denyButtonText: 'Hard',
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
             sendChoice('easy', company);
         } else if (result.isDenied) {
-            sendChoice('normal', company);
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
             sendChoice('hard', company);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            sendChoice('normal', company);
         }
     });
 }
-
 function sendChoice(choice, company) {
-    window.location.href = `/problem?company=${company}&choice=${choice}`;
+    fetch('/problem', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            company: company,
+            choice: choice
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Expect HTML response
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(html => {
+            // Replace the entire content of the page with the received HTML
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
+
+
+

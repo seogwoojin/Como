@@ -49,7 +49,15 @@
   <br>
   <button type="submit">Send PATCH Request</button>
 </form>
-
+<br>
+<form action="/company/links" method="POST">
+  <select name="companyName" required>
+    <option th:each="company : ${companies}" th:value="${company}" th:text="${company}"></option>
+  </select>
+  <label for="urls">Enter URLs (comma-separated):</label>
+  <input type="text" id="urls" name="urls" required>
+  <button type="submit">Submit</button>
+</form>
 <script>
   document.getElementById('patchForm').addEventListener('submit', function(event) {
     event.preventDefault();

@@ -34,9 +34,6 @@ class ProblemService (
                 }
             }
         }
-        companyAlgoExpectation.forEach{
-            println(it.problemAlgorithm+it.problemLevel)
-        }
         return mapBaekjoonProblem(companyAlgoExpectation)
     }
 
@@ -86,9 +83,8 @@ class ProblemService (
             }
             selectAble.forEach {
                 println(it.name)
-
             }
-            println("select random")
+            println("select random Problems->")
             AlgoWeightEnum.getRandomEnumByWeight(selectAble)
         }
         else{

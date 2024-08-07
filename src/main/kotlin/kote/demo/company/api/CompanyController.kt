@@ -41,4 +41,14 @@ class CompanyController (
     ){
         companyService.patchProblemPreference(problemAlgo)
     }
+
+    @PostMapping("/links")
+    @ResponseBody
+    fun updateCompanyLinks(
+        @RequestParam companyName: String,
+        @RequestParam urls: String
+    ):String{
+        companyService.addCompanyLink(companyName,urls)
+        return "OK"
+    }
 }
