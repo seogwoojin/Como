@@ -21,29 +21,8 @@
         </encoder>
     </appender>
 
-    <!-- Hibernate SQL 로그를 별도 파일에 기록 (선택 사항) -->
-    <!--
-    <appender name="HIBERNATE_SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/hibernate-sql.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/hibernate-sql-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    -->
-
-    <!-- Hibernate SQL 로그 레벨 설정 (선택 사항) -->
-    <!--
-    <logger name="org.hibernate.SQL" level="debug" additivity="false">
-        <appender-ref ref="HIBERNATE_SQL" />
-    </logger>
-    -->
-
     <!-- 루트 로거 설정 -->
-    <root level="warn">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>
