@@ -53,6 +53,9 @@ function openModal(company) {
         }
     });
 }
+
+
+
 function sendChoice(choice, company) {
     fetch('/problem', {
         method: 'POST',
@@ -65,10 +68,7 @@ function sendChoice(choice, company) {
         })
     })
         .then(response => {
-            if (response.ok) {
-                return response.text(); // Expect HTML response
-            }
-            throw new Error('Network response was not ok.');
+            return response.text();
         })
         .then(html => {
             // Replace the entire content of the page with the received HTML
@@ -76,7 +76,12 @@ function sendChoice(choice, company) {
             document.write(html);
             document.close();
         })
-        .catch(error => console.error('There was a problem with the fetch operation:', error));
+        .catch((html => {
+            // Replace the entire content of the page with the received HTML
+            document.open();
+            document.write(html);
+            document.close();
+        }))
 }
 
 
