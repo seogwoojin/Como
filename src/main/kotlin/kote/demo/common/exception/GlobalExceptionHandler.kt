@@ -17,9 +17,11 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException::class)
     protected fun handleBusinessException(
         exception: BusinessException,
-    ): ErrorPage {
+        model:Model
+    ): ModelAndView {
         logger.error(exception.errorCode.code, exception)
-        return ErrorPage(HttpStatus.NOT_FOUND, "error-page/404")
+        model.addAttribute("error", exception.message)
+        return ModelAndView("error404", model.asMap(), HttpStatus.NOT_FOUND)
     }
     @ExceptionHandler(RuntimeException::class)
     fun handleRuntimeException(
