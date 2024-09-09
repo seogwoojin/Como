@@ -1,9 +1,8 @@
 package kote.demo.app.main.api
 
 import kote.demo.app.company.service.CompanyService
-import kote.demo.app.main.SuggestionRepository
+import kote.demo.app.main.repository.SuggestionRepository
 import kote.demo.app.main.entity.Suggestion
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,7 +19,7 @@ class MainController (
 ) {
     @GetMapping
     fun getMain(model: Model): String {
-        model.addAttribute("items", companyService.getCompanyInfoList())
+        model.addAttribute("items", companyService.getCompanyInfoList().sortedByDescending { it.companyClick })
         return "main"
     }
 
