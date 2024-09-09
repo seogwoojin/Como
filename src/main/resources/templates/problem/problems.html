@@ -171,7 +171,12 @@
   <a class="navbar-brand" href="/">
     <img src="/images/COMO_V2.png" alt="Image" class="img-fluid" width="100px" height="100px"/>
   </a>
-  <h1 th:text="'기존 기출문제에 기반해 선택된 '+ ${company} + '의 ' + ${choice} +'난이도에 적합한 문제들입니다.'">Baekjoon Problems</h1>
+  <div th:with="difficulty=${choice == 'hard' ? '어려운' : (choice == 'normal' ? '평균적인' : '쉬운')}">
+    <h1 th:text="'기존 기출문제에 기반해 선택된 ' + ${company} + '의 ' + ${difficulty} + ' 수준의 문제들입니다.'">
+      Baekjoon Problems
+    </h1>
+  </div>
+
 </header>
 <div class="container-fluid tm-container-content tm-mt-60">
   <div class="row mb-4">

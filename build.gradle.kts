@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.3.0"
 	id("io.spring.dependency-management") version "1.1.5"
+	id("com.ncorti.ktfmt.gradle") version "0.12.0"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
 	kotlin("plugin.jpa") version "1.9.24"
