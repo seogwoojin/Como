@@ -4,7 +4,7 @@ import kote.demo.common.exception.ErrorCode
 
 open class ExternalApiFailedException : BusinessException {
 
-    constructor(errorCode: ErrorCode) : super(errorCode)
+  constructor(errorCode: ErrorCode) : super(errorCode)
 
-    constructor(message: String, errorCode: ErrorCode) : super(message, errorCode)
+  constructor(message: String, errorCode: ErrorCode) : super(message, errorCode)
 }
