@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 비동기 로깅을 위해서 AsyncAppender 사용 -->
+<!--    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        <appender-ref ref="FILE" />-->
+<!--    </appender>-->
+
+    <!-- 콘솔에 로그 출력 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- 파일에 로그 출력 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 로그 파일 패턴 설정 (매일 새로운 로그 파일 생성) -->
+            <fileNamePattern>logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 로그 파일 보관 기간 설정 (90일) -->
+            <maxHistory>90</maxHistory>
+            <!-- 로그 파일 최대 크기 설정 (10MB) -->
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 루트 로거 설정 (warn 레벨로 설정) -->
+    <root level="warn">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="ASYNC_FILE" />
+    </root>
+</configuration>
