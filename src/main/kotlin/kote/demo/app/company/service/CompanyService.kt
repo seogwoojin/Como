@@ -6,6 +6,7 @@ import kote.demo.app.company.entity.CompanyProblem
 import kote.demo.app.company.repository.CompanyProblemRepository
 import kote.demo.app.company.repository.CompanyRepository
 import kote.demo.app.company.util.RatingEnum
+import kote.demo.common.exception.company.CompanyNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
@@ -83,7 +84,7 @@ class CompanyService (
     }
 
     fun patchProblemPreference(problemAlgo:CompanyInfoDto.ProblemPreferRequestDto){
-        val company=companyRepository.findByName(problemAlgo.companyName)?:throw Exception()
+        val company=companyRepository.findByName(problemAlgo.companyName)?:throw CompanyNotFoundException()
         val companyProblemList=companyProblemRepository.findAllByCompanyOrderByProblemNumberAsc(company)
 
         updateProblemLevel(problemAlgo.problemNumber, companyProblemList, RatingEnum.valueOf(problemAlgo.problemLevel).level.toFloat())

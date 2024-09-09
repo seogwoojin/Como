@@ -12,5 +12,11 @@ enum class RatingEnum(val level:Int) {
     G3(13),
     G2(14),
     G1(15),
-    P5(16)
+    P5(16);
+
+    companion object {
+        fun fromLevel(level: Int): RatingEnum? {
+            return values().find { it.level == level }
+        }
+    }
 }
