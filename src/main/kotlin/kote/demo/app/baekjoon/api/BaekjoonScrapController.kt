@@ -1,16 +1,14 @@
 package kote.demo.app.baekjoon.api;
 
-import kote.demo.app.baekjoon.service.CodingTestService;
-import org.springframework.http.HttpStatus
+import kote.demo.app.baekjoon.service.BaekjoonScrapService
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("baekjoon")
 class BaekjoonScrapController(
-        private val codingTestService:CodingTestService
+        private val baekjoonScrapService: BaekjoonScrapService
 ) {
     @GetMapping("")
     fun getAdminPage():String
@@ -26,7 +24,7 @@ class BaekjoonScrapController(
         @RequestParam number:Int,
     ): String {
         if (onlineJudge.isBlank() || bojAutoLogin.isBlank()) throw Exception("Not Access")
-        codingTestService.getInfoFromBaekjoon(onlineJudge, bojAutoLogin, number)
+        baekjoonScrapService.getInfoFromBaekjoon(onlineJudge, bojAutoLogin, number)
         return "OK"
     }
 
